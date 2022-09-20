@@ -1,22 +1,23 @@
-const { Restaurant } = require("../models/restaurantM")
+
+//models
+const { Eatery } = require("../models/restaurantM")
 const { Review } = require("../models/reviewM")
 
-const checkEatery = async(req,res,next)=>{
-try {
+//utils
+const { catchAsync } = require('../util/catchAsyncUtil')
+const { appError } = require('../util/appError.util')
+
+const checkEatery = catchAsync(async(req,res,next)=>{
     const {id} = req.params
-    const eatery = await Restaurant.findByPk(id)
+    const eatery = await Eatery.findOne(id)
     if (!eatery) {
-        return res.status(404).json({
-        status: 'error',
-        mesaage: `Restaurant with id ${id} does not exist in this server.`
-      })
+        return next(new appError(`Restaurant with id ${id} does not exist in this server.`,404))
+      }
+    if (eatery.status !== 'active') {
+        return next(new appError(`Restaurant with id ${id} is not active right now.`,403))
+      }
       req.eatery = eatery
-    }
-    next()
-} catch (error) {
-  console.log(error)
-  }
-}
+})
 
 const checkReview = async(req,res,next)=>{
 try {
@@ -27,12 +28,12 @@ try {
     status: 'error',
     mesaage: `Review with id ${id} does not exist in this server.`
   })
-  req.review = review
   }
   next()
 } catch (error) {
   console.log(error)
   }
+  req.review = review
 }
 
 const checkReviewOwner = async(req,res,next)=>{
@@ -49,6 +50,11 @@ const checkReviewOwner = async(req,res,next)=>{
     console.log(error)
     }
   }
+
+
+  
+
+  
 
 
 

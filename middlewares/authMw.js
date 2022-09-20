@@ -49,7 +49,7 @@ const protectSession = async (req, res, next) => {
 }
 
 // Check the sessionUser to compare to the one that wants to be updated/deleted
-/*
+
 const protectUsersAccount = (req, res, next) => { 
 	const { sessionUser, user } = req;
 	// If the users (ids) don't match, send an error, otherwise continue
@@ -62,10 +62,10 @@ const protectUsersAccount = (req, res, next) => {
 
 	// If the ids match, grant access
 	next()
-};*/
+}
 
 // Create middleware to protect posts, only owners should be able to update/delete
-/*
+
 const protectPostsOwners = (req, res, next) => {
 	const { sessionUser, post } = req;
 
@@ -77,10 +77,10 @@ const protectPostsOwners = (req, res, next) => {
 	}
 
 	next();
-};*/
+}
 
 // Create middleware to protect comments, only owners should be able to update/delete
-/*
+
 const protectCommentsOwners = (req, res, next) => {
 	const { sessionUser, comment } = req;
 
@@ -92,17 +92,17 @@ const protectCommentsOwners = (req, res, next) => {
 	}
 
 	next();
-}*/
+}
 
-// Create middleware that only grants access to admin users
+//*Create middleware that only grants access to admin users
 const checkUserRole = (req, res, next) => {
 	const { sessionUser } = req
 
 	if (sessionUser.role !== 'admin') {
 		return res.status(403).json({
 			status: 'error',
-			message: 'You do not have the access level for action.',
-		});
+			message: 'You do not have the access level for this action.',
+		})
 	}
 	next()
 }
@@ -127,9 +127,8 @@ const protectUsersOrders = (req, res, next) => {
 module.exports = {
 	protectSession,
 	protectUsersAccount,
-	protectPostsOwners,
-	protectCommentsOwners,
 	checkUserRole,
-	protectUsersOrders
-	
+	protectUsersOrders,
+	protectPostsOwners
 }
+

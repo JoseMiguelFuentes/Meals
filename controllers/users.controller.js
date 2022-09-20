@@ -7,7 +7,7 @@ const { User } = require('../models/userM')
 const { Order } = require('../models/orderM')
 const { Review } = require('../models/reviewM')
 const { Meal } = require('../models/mealM')
-const { Restaurant } = require('../models/restaurantM')
+const { Eatery } = require('../models/restaurantM')
 
 dotenv.config({ path: './config.env' })
 
@@ -46,11 +46,11 @@ const getAllUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
 	try {
-		const { name, email, password } = req.body;
+		const { name, email, password } = req.body
 
 		// Encrypt the password
-		const salt = await bcrypt.genSalt(12);
-		const hashedPassword = await bcrypt.hash(password, salt);
+		const salt = await bcrypt.genSalt(12)
+		const hashedPassword = await bcrypt.hash(password, salt)
 
 		const newUser = await User.create({
 			name,
@@ -140,7 +140,7 @@ const login = async (req, res) => {
 		console.log(error)
 	}
 }
-/*
+
 const getUserOrders = async(req,res)=>{
 	try {
 		const {id} = req.sessionUser
@@ -157,7 +157,7 @@ const getUserOrders = async(req,res)=>{
 		console.log(error)
 	}
 }
-*/
+
 const getOrderById = async(req,res,next)=>{
 	try {
 		const {id} = req.order

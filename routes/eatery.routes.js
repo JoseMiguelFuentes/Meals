@@ -11,7 +11,7 @@ eateryRouter.get('/:id',checkEatery,getOneEatery)
 
 
 // Protecting below endpoints
-usersRouter.use(protectSession)
+eateryRouter.use(protectSession)
 
 eateryRouter.post('/', createEatery)
 
@@ -24,14 +24,6 @@ eateryRouter.post('/reviews/:id',checkEatery, createReview)
 eateryRouter.patch('/reviews/:id',checkReview,checkReviewOwner,updateReview)
 //Delete review by id
 eateryRouter.delete('/reviews/:id',checkReview,checkReviewOwner,deleteReview)
-
-
-
-
-
-
-
-
 
 
 

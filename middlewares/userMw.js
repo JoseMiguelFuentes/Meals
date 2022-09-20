@@ -27,22 +27,22 @@ const userExists = async (req, res, next) => {
 	}
 }
 
-// const orderExists = async(req,res,next)=>{
-// 	try {
-// 		const {id} = req.params 
-// 		const order = await Order.findByPk(id)
-// 		if (!order) {
-// 			return res.status(404).json({
-// 				status:'error',
-// 				message: `Order with id ${id} doesn't exist in our server.`
-// 			})
-// 		}
-// 		req.order = order
-// 		next()
-// 	} catch (error) {
-// 		console.log(error)
-// 	}
-// }
+const orderExists = async(req,res,next)=>{
+	try {
+		const {id} = req.params 
+		const order = await Order.findByPk(id)
+		if (!order) {
+			return res.status(404).json({
+				status:'error',
+				message: `Order with id ${id} doesn't exist in our server.`
+			})
+		}
+		req.order = order
+		next()
+	} catch (error) {
+		console.log(error)
+	}
+}
 
 
 

@@ -1,6 +1,6 @@
 const { data, DataTypes } = require('../util/database.util')
 
-const Restaurant = data.define('restaurant', {
+const Eatery = data.define('restaurant', {
   id:{
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -10,16 +10,17 @@ const Restaurant = data.define('restaurant', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  adress:{
+  address:{
     type: DataTypes.STRING,
     allowNull:false
   },
   rating:{
     type: DataTypes.INTEGER,//Between 1 & 5
+    allowNull:false
   },
   status:{
     type: DataTypes.STRING,
     defaultValue: 'active'
   }
 })
-module.exports = { Restaurant }
+module.exports = { Eatery }

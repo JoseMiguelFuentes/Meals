@@ -14,7 +14,7 @@ const checkValidations = (req, res, next) => {
 		});
 	}
 
-	next();
+	next()
 };
 
 const createUserValidators = [
@@ -34,22 +34,24 @@ const createUserValidators = [
 		.isLength({ min: 6, max:6 })
 		.withMessage('Password must be  6 characters'),
 	checkValidations,
-];
+]
+const mealValidator =[
+	body('name')
+	.isString()
+	.withMessage('Name must be a string')
+	.notEmpty()
+	.withMessage('Name can not be empty')
+	.isLength({ min: 3 })
+	.withMessage('Name must be at least 3 characters'),
+	body('price')
+	.isNumeric()
+	.withMessage('Price must be a number')
+	.notEmpty()
+	.withMessage('Price can not be empty')
+]
 
-// const createPostValidators = [
-// 	body('title')
-// 		.isString()
-// 		.withMessage('Title must be a string')
-// 		.isLength({ min: 3 })
-// 		.withMessage('Title must be at least 3 characters'),
-// 	body('content')
-// 		.isString()
-// 		.withMessage('Content must be a string')
-// 		.isLength({ min: 3 })
-// 		.withMessage('Content must be at least 3 characters long'),
-// 	checkValidations,
-// ];
 
-module.exports = { createUserValidators, createPostValidators };
+
+module.exports = { createUserValidators, mealValidator }
 
 

@@ -8,6 +8,7 @@ const Review = data.define('reviews', {
   },
   userId:{
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   comment:{
     type: DataTypes.STRING,
@@ -15,9 +16,11 @@ const Review = data.define('reviews', {
   },
   restaurantId:{
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   rating:{
     type: DataTypes.INTEGER,//Between 1 & 5
+    allowNull: false,
   }
 })
 module.exports = { Review }

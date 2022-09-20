@@ -22,12 +22,11 @@ const User = data.define('users', {
 	},
 	status: {
 		type: DataTypes.STRING,
-		allowNull: false,
-		defaultValue: 'active',
+		defaultValue: 'active'
 	},
 	role: {
 		type: DataTypes.STRING,
-		defaultValue: 'normal',
+		defaultValue: 'normal',//admin
 		allowNull: false,
 	}
 })

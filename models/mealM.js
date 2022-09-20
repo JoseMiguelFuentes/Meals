@@ -21,7 +21,6 @@ const Meal = data.define('meal', {
 	},
 	status: {
 		type: DataTypes.STRING,
-		allowNull: false,
 		defaultValue: 'active',
 	}
 })
