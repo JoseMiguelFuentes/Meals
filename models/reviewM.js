@@ -21,6 +21,11 @@ const Review = data.define('reviews', {
   rating:{
     type: DataTypes.INTEGER,//Between 1 & 5
     allowNull: false,
+  },
+  status:{
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue:'active'
   }
 })
 module.exports = { Review }
