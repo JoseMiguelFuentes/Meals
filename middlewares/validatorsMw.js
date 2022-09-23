@@ -11,13 +11,12 @@ const checkValidations = (req, res, next) => {
 		return res.status(400).json({
 			status: 'error',
 			message,
-		});
+		})
 	}
-
 	next()
-};
+}
 
-const createUserValidators = [
+const userValidator = [
 	body('name')
 		.isString()
 		.withMessage('Name must be a string')
@@ -25,7 +24,9 @@ const createUserValidators = [
 		.withMessage('Name cannot be empty')
 		.isLength({ min: 3 })
 		.withMessage('Name must be at least 3 characters'),
-	body('email').isEmail().withMessage('Must provide a valid email'),
+	body('email')
+	.isEmail().trim()
+	.withMessage('Must provide a valid email'),
 	body('password')
 		.isString()
 		.withMessage('Password must be a string')
@@ -38,20 +39,54 @@ const createUserValidators = [
 const mealValidator =[
 	body('name')
 	.isString()
-	.withMessage('Name must be a string')
+	.withMessage('name must be a string')
 	.notEmpty()
-	.withMessage('Name can not be empty')
+	.withMessage('name can not be empty')
 	.isLength({ min: 3 })
-	.withMessage('Name must be at least 3 characters'),
+	.withMessage('name must be at least 3 characters'),
 	body('price')
 	.isNumeric()
-	.withMessage('Price must be a number')
+	.withMessage('price must be a number')
 	.notEmpty()
-	.withMessage('Price can not be empty')
+	.withMessage('price can not be empty')
+]
+const createResValidator =[
+	body('name')
+	.isString()
+	.withMessage('name must be a string')
+	.notEmpty()
+	.withMessage('name can not be empty')
+	.isLength({ min: 5 })
+	.withMessage('name must be at least 5 characters'),
+	body('address')
+	.isString()
+	.withMessage('address must be a string')
+	.notEmpty()
+	.withMessage('address can not be empty'),
+	body('rating')
+	.isNumeric({ min:1, max:5 })
+	.withMessage('rating must be a number')
+	.notEmpty()
+	.withMessage('rating can not be empty')
+]
+
+let ratinsallowed = [1,2,3,4,5]
+
+const createReviewValidator = [
+	body('comment')
+	.isString()
+	.withMessage('comment must be a string')
+	.notEmpty()
+	.withMessage('comment can not be empty'),
+	body('rating')
+	.isNumeric().isLength({min:1,max:1})
+	.withMessage('rating must be a number')
+	.notEmpty()
+	.withMessage('rating can not be empty')
 ]
 
 
 
-module.exports = { createUserValidators, mealValidator }
+module.exports = { userValidator,mealValidator,createResValidator,createReviewValidator }
 
 

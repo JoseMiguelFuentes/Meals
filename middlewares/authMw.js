@@ -3,29 +3,26 @@ const dotenv = require('dotenv')
 
 // Models
 const { User } = require('../models/userM');
+//Utils
+const { catchAsync } = require('../util/catchAsyncUtil')
+const { appError } = require('../util/appError.util')
 
 dotenv.config({ path: './config.env' });
 
-const protectSession = async (req, res, next) => {
-	try {
+const protectSession = catchAsync(async(req, res, next) => {
 		// Get token
-		let token;
+		let token
 
 		if (
 			req.headers.authorization &&
 			req.headers.authorization.startsWith('Bearer')
 		) {
 			// Extract token
-			// req.headers.authorization = 'Bearer token'
 			token = req.headers.authorization.split(' ')[1]; // -> [Bearer, token]
 		}
-
 		// Check if the token was sent or not
 		if (!token) {
-			return res.status(403).json({
-				status: 'error',
-				message: 'Invalid session',
-			});
+			return next(new appError('You are not logged',403))
 		}
 		// Verify the token
 		const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -35,92 +32,56 @@ const protectSession = async (req, res, next) => {
 		})
 
 		if (!user) {
-			return res.status(403).json({
-				status: 'error',
-				message: 'The owner of the session is no longer active',
-			});
+			return next(new appError('The owner of the session is no longer active',403))
 		}
 		// Grant access
 		req.sessionUser = user
-		next()
-	} catch (error) {
-		console.log(error);
-	}
-}
+})
 
-// Check the sessionUser to compare to the one that wants to be updated/deleted
-
-const protectUsersAccount = (req, res, next) => { 
-	const { sessionUser, user } = req;
+//*Check the sessionUser to compare to the one that wants to be updated/deleted
+const protectUsersAccount = catchAsync(async(req, res, next) => { 
+	const { sessionUser, user } = req
 	// If the users (ids) don't match, send an error, otherwise continue
 	if (sessionUser.id !== user.id) {
-		return res.status(403).json({
-			status: 'error',
-			message: 'You are not the owner of this account.',
-		})
+		return next( new appError('You are not the owner of this account.',403))
 	}
-
-	// If the ids match, grant access
-	next()
-}
+})
 
 // Create middleware to protect posts, only owners should be able to update/delete
 
-const protectPostsOwners = (req, res, next) => {
-	const { sessionUser, post } = req;
+const protectPostsOwners = catchAsync(async(req, res, next) => {
+	const { sessionUser, post } = req
 
 	if (sessionUser.id !== post.userId) {
-		return res.status(403).json({
-			status: 'error',
-			message: 'This post does not belong to you.',
-		});
+		return next(new appError('This post does not belong to you.',403))
 	}
-
-	next();
-}
+})
 
 // Create middleware to protect comments, only owners should be able to update/delete
-
-const protectCommentsOwners = (req, res, next) => {
-	const { sessionUser, comment } = req;
+const protectCommentsOwners = catchAsync(async(req, res, next) => {
+	const { sessionUser, comment } = req
 
 	if (sessionUser.id !== comment.userId) {
-		return res.status(403).json({
-			status: 'error',
-			message: 'This comment does not belong to you.',
-		});
+		return next(new appError('This comment does not belong to you.',403))
 	}
-
-	next();
-}
+})
 
 //*Create middleware that only grants access to admin users
-const checkUserRole = (req, res, next) => {
+const checkUserRole = catchAsync(async(req, res, next) => {
 	const { sessionUser } = req
-
+//*Check user's Role
 	if (sessionUser.role !== 'admin') {
-		return res.status(403).json({
-			status: 'error',
-			message: 'You do not have the access level for this action.',
-		})
+		return next(new appError('You do not have the access level for this action.',403))
 	}
-	next()
-}
+})
 
-const protectUsersOrders = (req, res, next) => {
-	try {
+//*Checking if order belong.
+const protectUsersOrders = catchAsync(async(req, res, next) => {
 		const {order, sessionUser} = req
 		if (order.UserId !== sessionUser.id) {
-			return res.status(403).json({
-				status: 'error',
-				message: `The order ${order.id} does not belong to you.`,
-			})
+			return next(new appError(`The order (${order.id}) does not belong to you.`,403))
 		}
-		next()
-	} catch (error) {
-		console.log(error)
-	}
-}
+})
 
 
 

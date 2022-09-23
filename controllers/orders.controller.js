@@ -16,7 +16,7 @@ const createOrder = catchAsync(async (req, res, next) => {
   const newOrder = await Order.create({
     mealId,
     quantity,
-    UserId:id,
+    userId:id,
     totalPrice: meal.price * quantity
   })
   res.status(201).json({
@@ -28,7 +28,9 @@ const createOrder = catchAsync(async (req, res, next) => {
 const getAllUserOrder = catchAsync(async (req, res, next) => {
   const {id}= req.sessionUser
   const orders = await Order.findAll({where:{userId:id},
-    include:[{model:Meal},{model:Eatery}]
+    attributes:{exclude:['createdAt','updatedAt']},
+    include:[{model:Meal,attributes:{exclude:['createdAt','updatedAt']},
+      include:{model:Eatery,attributes:{exclude:['createdAt','updatedAt']}}}]
   })
   
   res.status(200).json({

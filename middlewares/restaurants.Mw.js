@@ -6,10 +6,10 @@ const { Review } = require("../models/reviewM")
 //utils
 const { catchAsync } = require('../util/catchAsyncUtil')
 const { appError } = require('../util/appError.util')
-
+//*Check if Restaurant exists.
 const checkEatery = catchAsync(async(req,res,next)=>{
     const {id} = req.params
-    const eatery = await Eatery.findOne(id)
+    const eatery = await Eatery.findOne({where:{id},status:'active'})
     if (!eatery) {
         return next(new appError(`Restaurant with id ${id} does not exist in this server.`,404))
       }
@@ -18,44 +18,22 @@ const checkEatery = catchAsync(async(req,res,next)=>{
       }
       req.eatery = eatery
 })
-
-const checkReview = async(req,res,next)=>{
-try {
+//*Check if Review exists.
+const checkReview = catchAsync(async(req,res,next)=>{
   const {id} = req.params
   const review = await Review.findByPk(id)
   if (!review) {
-    return res.status(404).json({
-    status: 'error',
-    mesaage: `Review with id ${id} does not exist in this server.`
-  })
-  }
-  next()
-} catch (error) {
-  console.log(error)
+    return next(new appError(`Review with id ${id} does not exist in this server.`,404))
   }
   req.review = review
-}
-
-const checkReviewOwner = async(req,res,next)=>{
-  try {
+})
+//*Check  Review owner.
+const checkReviewOwner = catchAsync(async(req,res,next)=>{
     const {review, sessionUser} = req
     if (sessionUser.id !== review.userId) {
-      return res.status(403).json({
-				status: 'error',
-				message: `The review ${review.id} does not belong to you.`,
-			})
+      return next(new appError(`The review with id (${review.id}) does not belong to you.`,403 ))
     }
-    next()
-  } catch (error) {
-    console.log(error)
-    }
-  }
-
-
-  
-
-  
-
+  })
 
 
 module.exports = {

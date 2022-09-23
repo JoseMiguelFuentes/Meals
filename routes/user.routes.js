@@ -2,7 +2,6 @@ const express = require('express');
 
 // Controllers
 const {
-	getAllUsers,
 	createUser,
 	updateUser,
 	deleteUser,
@@ -20,19 +19,18 @@ const {
 	protectUsersOrders,
 } = require('../middlewares/authMw')
 const {
-	createUserValidators,
+	userValidator
 } = require('../middlewares/validatorsMw')
 
 const userRouter = express.Router()
 
-userRouter.post('/signup', createUserValidators, createUser)
+userRouter.post('/signup', userValidator, createUser)
 
 userRouter.post('/login', login)
 
 // Protecting below endpoints
 userRouter.use(protectSession)
 
-userRouter.get('/',  getAllUsers)//protectAdmin,
 
 userRouter.patch('/:id', userExists, protectUsersAccount, updateUser)
 

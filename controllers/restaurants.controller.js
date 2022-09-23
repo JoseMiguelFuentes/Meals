@@ -1,50 +1,42 @@
-const { Restaurant } = require("../models/restaurantM")
+const { Eatery } = require("../models/restaurantM")
 const { Review } = require("../models/reviewM")
 
+const { catchAsync } = require("../util/catchAsyncUtil")
+const { appError } = require('../util/appError.util')
 
 
-const createEatery = async(req,res)=>{
-try {
-  const { name, adress, rating } = req.body
-  const newEatery = await Restaurant.create({
+//*Create restaurant.
+const createEatery =  catchAsync(async(req,res,next)=>{
+  const { name, address, rating } = req.body
+  const newEatery = await Eatery.create({
     name,
-    adress,
+    address,
     rating
   })
-  res.status(200).json({
+  res.status(201).json({
     status:'success',
     data: {newEatery}
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-
-const getAllEateries = async(req,res)=>{
-try {
-  const {id} = req.params
-  const eateries = await Restaurant.findAll({where: {status:'active'}})
+})
+//*Get all restaurants.
+const getAllEateries = catchAsync(async(req,res,next)=>{
+  const eateries = await Eatery.findAll({where: {status:'active'},include:{model:Review, where:{status:'active'}}})
   res.status(200).json({
     status:'success',
-    data:{eateries}
+    data:{eateries} 
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-const getOneEatery = async(req,res)=>{
-  try {
-    const {eatery} = req
+})
+//*Get just one restaurant by id.
+const getOneEatery = catchAsync(async(req,res,next)=>{
+    const {id} = req.eatery
+    const eatery = await Eatery.findOne({where: {id},status:'active',include:{model:Review}})
     res.status(200).json({
       status:'succes',
       data:{eatery}
     })
-  } catch (error) {
-    console.log(error)
-    }
-}
-const  updateEatery = async(req,res)=>{
-try {
+})
+//*Update restaurant properties by Admin.
+const  updateEatery = catchAsync(async(req,res,next)=>{
   const {name,adress} = req.body
   const {eatery} = req
   await eatery.update({name,adress})
@@ -52,60 +44,48 @@ try {
     status:'success',
     data:{eatery}
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-const deleteEatery = async(req,res)=>{
-try {
+})
+//*Change Status of the restaurant  by Admin.
+const deleteEatery = catchAsync(async(req,res,next)=>{
   const {eatery} = req
   await eatery.update({status:'disable'})
   res.status(204).json({
     status:'success'
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-
-const createReview = async(req,res)=>{
-try {
+})
+//*Create review to restaurant  by user.
+const createReview = catchAsync(async(req,res,next)=>{
   const {comment,rating} = req.body
-  const {restaurantId} = req.eatery
-  const {userId} = req.sessionUser.id
+  const restaurantId = req.eatery.id
+  const userId = req.sessionUser.id
   const newReview = await Review.create({userId,comment,restaurantId,rating})
+  if (rating > 5 || rating < 1) {
+    return   next(new appError('rating has to be an  integer between 1 and 5.',400))
+  }
   res.status(201).json({
     status:'success',
     data:{newReview}
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-
-const updateReview = async(req,res)=>{
-try {
+})
+//*Update review for restaurant  by owner.
+const updateReview = catchAsync(async(req,res,next)=>{
   const {comment,rating} = req.body
   const {review} = req
   await review.update({comment,rating})
-  res.status(201).json({
+  if (rating > 5 || rating < 1) {
+    return   next(new appError('rating has to be an  integer between 1 and 5.',400))
+  }
+  res.status(200).json({
     status:'success',
     data:{review}
   })
-} catch (error) {
-  console.log(error)
-  }
-}
-
-const deleteReview = async(req,res,next)=>{
-try {
+})
+//*Change review status for restaurant  by owner.
+const deleteReview = catchAsync(async(req,res,next)=>{
   const {review} = req
   await review.update({status:'deleted'})
   res.status(204).json({status:'success'})
-} catch (error) {
-  console.log(error)
-  }
-}
+})
 
 
 module.exports = {

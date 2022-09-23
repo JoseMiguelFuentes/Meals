@@ -1,48 +1,26 @@
 // Models
 const { Order } = require('../models/orderM');
 const { User } = require('../models/userM');
-
-const userExists = async (req, res, next) => {
-	try {
+const { appError } = require('../util/appError.util');
+const { catchAsync } = require('../util/catchAsyncUtil');
+//*Looking for user
+const userExists = catchAsync(async (req, res, next) => {
 		const { id } = req.params
-
-		const user = await User.findOne({
-			attributes: { exclude: ['password'] },
-			where: { id },
-		});
-
-		// If user doesn't exist, send error message
+		const user = await User.findOne({where: { id }})
 		if (!user) {
-			return res.status(404).json({
-				status: 'error',
-				message: 'User not found',
-			})
+			return next( new appError('User not found',404))
 		}
-
-		// req.anyPropName = 'anyValue'
 		req.user = user
-		next()
-	} catch (error) {
-		console.log(error)
-	}
-}
-
-const orderExists = async(req,res,next)=>{
-	try {
+})
+//*Check if order exist.
+const orderExists = catchAsync(async(req,res,next)=>{
 		const {id} = req.params 
 		const order = await Order.findByPk(id)
 		if (!order) {
-			return res.status(404).json({
-				status:'error',
-				message: `Order with id ${id} doesn't exist in our server.`
-			})
-		}
+			return  next( new appError(`Order with id (${id}) doesn't exist in our server.`,404))
+			}
 		req.order = order
-		next()
-	} catch (error) {
-		console.log(error)
-	}
-}
+})
 
 
 

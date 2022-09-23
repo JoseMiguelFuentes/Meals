@@ -6,6 +6,7 @@ const { orderRouter } = require('./routes/order.routes')
 const { userRouter } = require('./routes/user.routes')
 const { catchAsync } = require('./util/catchAsyncUtil')
 
+const {globalErrorHandler} = require('./controllers/error.controller.js')
 
 const app = express()
 
@@ -16,15 +17,15 @@ app.use('/api/v1/restaurants', eateryRouter)
 app.use('/api/v1/orders', orderRouter)
 app.use('/api/v1/meals', mealRouter)
 
+app.use(globalErrorHandler)
 
-
-app.all('*', (req, res, next)=>{
+app.all('*', (req, res)=>{
   const {method, url} = req
-  return next(catchAsync(`${method} ${url} doesn't exist in our server`,404))
-  // response.status(404).json({
-  //   status: 'error',
-  //   message: `${method} ${url} doesn't exist in our server`
-  // })
+  // return next(catchAsync(`${method} ${url} doesn't exist in our server`,404))
+  res.status(404).json({
+    status: 'error',
+    message: `${method} ${url} doesn't exist in our server`
+  })
 })
 
 
